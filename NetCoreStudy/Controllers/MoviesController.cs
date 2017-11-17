@@ -20,9 +20,17 @@ namespace NetCoreStudy.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Movie.ToListAsync());
+            var movies = from m in _context.Movie
+                         select m;
+            Console.WriteLine("movie ------------> " + movies.Count());
+            if (String.IsNullOrEmpty(searchString) == false)
+            {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
+
+            return View(await movies.ToListAsync());
         }
 
         // GET: Movies/Details/5
@@ -84,9 +92,13 @@ namespace NetCoreStudy.Controllers
         // POST: Movies/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // HttpPost Attribute를 통해 Edit 액션이 Post 요청에 의해서만 호출 되도록 한다. (HttpGet Attribute는 기본값)
+        // Bind Attribute를 통해서 OverPosting을 막는다.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")] Movie movie)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("ID, Title, ReleaseDate, Genre, Price")] Movie movie)
         {
             if (id != movie.ID)
             {
