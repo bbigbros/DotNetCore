@@ -45,7 +45,6 @@ namespace NetCoreStudy.Controllers
             movieGenreVM.genres = new SelectList(await genreQuery.Distinct().ToListAsync());
             movieGenreVM.movies = await movies.ToListAsync();
 
-            Console.WriteLine("movieGenreVM ==> " + movieGenreVM);
             return View(movieGenreVM);
         }
 
@@ -115,7 +114,7 @@ namespace NetCoreStudy.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-            [Bind("ID, Title, ReleaseDate, Genre, Price")] Movie movie)
+            [Bind("ID, Title, ReleaseDate, Genre, Price, Rating")] Movie movie)
         {
             if (id != movie.ID)
             {
