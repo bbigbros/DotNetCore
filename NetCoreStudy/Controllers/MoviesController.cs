@@ -20,17 +20,33 @@ namespace NetCoreStudy.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
+            // Use Linq to get list of Genre's
+            IQueryable<string> genreQuery = from m in _context.Movie
+                                            orderby m.Genre
+                                            select m.Genre;
+
             var movies = from m in _context.Movie
                          select m;
-            Console.WriteLine("movie ------------> " + movies.Count());
+
+
             if (String.IsNullOrEmpty(searchString) == false)
             {
                 movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
-            return View(await movies.ToListAsync());
+            if (String.IsNullOrEmpty(movieGenre) == false)
+            {
+                movies = movies.Where(x => x.Genre == movieGenre);
+            }
+
+            var movieGenreVM = new MovieGenreViewModel();
+            movieGenreVM.genres = new SelectList(await genreQuery.Distinct().ToListAsync());
+            movieGenreVM.movies = await movies.ToListAsync();
+
+            Console.WriteLine("movieGenreVM ==> " + movieGenreVM);
+            return View(movieGenreVM);
         }
 
         // GET: Movies/Details/5
@@ -62,7 +78,8 @@ namespace NetCoreStudy.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,ReleaseDate,Genre,Price")] Movie movie)
+        public async Task<IActionResult> Create(
+            [Bind("ID, Title, ReleaseDate, Genre, Price, Rating")] Movie movie)
         {
             if (ModelState.IsValid)
             {
