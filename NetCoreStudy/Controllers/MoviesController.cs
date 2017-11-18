@@ -56,8 +56,7 @@ namespace NetCoreStudy.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie
-                .SingleOrDefaultAsync(m => m.ID == id);
+            var movie = await _context.Movie.SingleOrDefaultAsync(m => m.ID == id);
             if (movie == null)
             {
                 return NotFound();
@@ -152,8 +151,7 @@ namespace NetCoreStudy.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie
-                .SingleOrDefaultAsync(m => m.ID == id);
+            var movie = await _context.Movie.SingleOrDefaultAsync(m => m.ID == id);
             if (movie == null)
             {
                 return NotFound();
